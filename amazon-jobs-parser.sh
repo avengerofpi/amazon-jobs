@@ -69,8 +69,12 @@ numJobs="${totalNumJobs}";
 [ ${numJobs} -gt 0 ] || { echo "Error: could not find any jobs in files '${jobsFile}'" && exit 2; }
 
 
+# _____________________________________________________
 # for testing, use a smaller value of numJobs
-[ ${numJobs} -gt 5 ] && numJobs=5;
+testNumJobs=5;
+[ ${testNumJobs} -gt 0 ] && [ ${numJobs} -gt ${testNumJobs} ] && numJobs="${testNumJobs}";
+# _____________________________________________________
+
 
 # Get specified JSON attribute from specified file
 function getJobAttributes() {
