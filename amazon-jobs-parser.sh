@@ -198,7 +198,9 @@ function logSummaryMetrics() {
   local limit=20;
   echo "  Bin these files by md5sum hash (sort the lines first) and count size of each bin. Tail the output to ${limit} lines.";
   echo "    Number of bins: $(md5sum ${globPattern} | awk '{print $1}' | sort -u | wc -l)";
-  sort ${globPattern} | md5sum | awk '{print $1}' | mysortcountpipe | tail -${limit}
+  for f in ${globPattern}; do
+    sort ${f} | md5sum | awk '{print $1}';
+  done | mysortcountpipe | tail -${limit};
   # Bin these files by line length and count size of each bin. Skip the last line (the total).
   echo;
   echo "  Bin these files by line length and count size of each bin.";
