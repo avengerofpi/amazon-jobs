@@ -97,7 +97,8 @@ function createJobFiles() {
   local jobFilePrefix="${jobDetailsDir}/${city,,}.${state,,}.${team}.${jobId}";
   local jobFile="${jobFilePrefix}.job.json";
   local basicQualificationsFile="${jobFilePrefix}.basic_qualifications.json";
-  local basicQualificationsFile_normalized="${jobFilePrefix}.basic_qualifications.processed.json";
+  nomalizedFilesSuffix="normalized.txt";
+  local basicQualificationsFile_normalized="${jobFilePrefix}.basic_qualifications.${nomalizedFilesSuffix}";
 
   echo "  Creating file ${jobFile}";
   mv "${tmpJobFile}" "${jobFile}";
@@ -182,8 +183,31 @@ function normalizeJobFile() {
   sed -i -e "/^\.*$/d" "${f}";
 }
 
+# Define a pipe function to make frequency distribution tabulation easy.
+# Sorry that the name is wonky; it matches convention I use elsewhere :grimmace: :grin:
+function mysortcountpipe () {
+    sort | uniq -c | sort -n
+}
+
+# Print some maybe? useful summary metrics of the processed job ad files.
+function logSummaryMetrics() {
+  local globPattern="${jobDetailsDir}/*${nomalizedFilesSuffix}";
+  echo;
+  echo "Some metrics about the files '${globPattern}'";
+  # Bin these files by md5sum hash (sort the lines first) and count size of each bin. Tail the output.
+  local limit=20;
+  echo "  Bin these files by md5sum hash (sort the lines first) and count size of each bin. Tail the output to ${limit} lines.";
+  echo "    Number of bins: $(md5sum ${globPattern} | awk '{print $1}' | sort -u | wc -l)";
+  sort ${globPattern} | md5sum | awk '{print $1}' | mysortcountpipe | tail -${limit}
+  # Bin these files by line length and count size of each bin. Skip the last line (the total).
+  echo;
+  echo "  Bin these files by line length and count size of each bin.";
+  wc -l ${globPattern} | awk '{print $1}' | head -n -1 | mysortcountpipe
+}
+
 # Create files for each job ad
 echo "Processing ${numJobs} of ${totalNumJobs} jobs:";
 for (( i=0; i<numJobs; i++ )) {
   createJobFiles ${i};
 }
+logSummaryMetrics;
