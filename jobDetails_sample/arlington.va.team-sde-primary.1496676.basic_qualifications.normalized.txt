@@ -1,0 +1,7 @@
+bs degree in computer science or related technical field.
+6+ years of salesforce development experience to include configuration, customization, programming with apex, lightning web components (lwc), triggers, workflows with actions, approval processes, reports & dashboards.
+2+ years as lead or technical architect of a salesforce org.
+experience with javascript, html css and ant.
+experience with salesforce_com architecture and apis.
+experience in building complex, scalable, and high-performance software systems.
+experience with integrations and knowledge of integration patterns

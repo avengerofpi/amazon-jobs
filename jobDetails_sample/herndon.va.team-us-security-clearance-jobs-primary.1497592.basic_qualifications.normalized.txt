@@ -1,0 +1,4 @@
+2+ years of non-internship professional software development experience.
+programming experience with at least 1 modern language such as java, c++, or c# including object-oriented design.
+1+ years of experience contributing to the architecture and design (architecture, design patterns, reliability and scaling) of new and current systems.
+bs degree in computer science, mathematics or engineering or 5+ years development experience (non internship) in lieu of degree

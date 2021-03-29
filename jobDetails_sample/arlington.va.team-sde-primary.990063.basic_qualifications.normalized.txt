@@ -1,0 +1,3 @@
+4+ years of professional software development experience.
+3+ years of programming experience with at least 1 modern language such as java, c++, or c# including object-oriented design.
+2+ years of experience contributing to the architecture and design (architecture, design patterns, reliability and scaling) of new and current systems.

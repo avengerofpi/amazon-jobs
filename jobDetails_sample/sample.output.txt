@@ -1,0 +1,49 @@
+Using job details directory 'jobDetails_01'
+Processing jobs file 'jobs.aws.md-local.software-development.2021-03-29--13h17m44s.json'
+Processing 5 of 520 jobs:
+
+Processing job # 0001
+  Creating file jobDetails_01/herndon.va.team-sde-primary.994952.job.json
+  Creating file jobDetails_01/herndon.va.team-sde-primary.994952.basic_qualifications.json
+  Creating normalized version of file 'jobDetails_01/herndon.va.team-sde-primary.994952.basic_qualifications.json'
+  Normalizing job file 'jobDetails_01/herndon.va.team-sde-primary.994952.basic_qualifications.normalized.txt'
+
+Processing job # 0002
+  Creating file jobDetails_01/arlington.va.team-sde-primary.990063.job.json
+  Creating file jobDetails_01/arlington.va.team-sde-primary.990063.basic_qualifications.json
+  Creating normalized version of file 'jobDetails_01/arlington.va.team-sde-primary.990063.basic_qualifications.json'
+  Normalizing job file 'jobDetails_01/arlington.va.team-sde-primary.990063.basic_qualifications.normalized.txt'
+
+Processing job # 0003
+  Creating file jobDetails_01/herndon.va.team-us-security-clearance-jobs-primary.1497592.job.json
+  Creating file jobDetails_01/herndon.va.team-us-security-clearance-jobs-primary.1497592.basic_qualifications.json
+  Creating normalized version of file 'jobDetails_01/herndon.va.team-us-security-clearance-jobs-primary.1497592.basic_qualifications.json'
+  Normalizing job file 'jobDetails_01/herndon.va.team-us-security-clearance-jobs-primary.1497592.basic_qualifications.normalized.txt'
+
+Processing job # 0004
+  Creating file jobDetails_01/arlington.va.team-sde-primary.1496676.job.json
+  Creating file jobDetails_01/arlington.va.team-sde-primary.1496676.basic_qualifications.json
+  Creating normalized version of file 'jobDetails_01/arlington.va.team-sde-primary.1496676.basic_qualifications.json'
+  Normalizing job file 'jobDetails_01/arlington.va.team-sde-primary.1496676.basic_qualifications.normalized.txt'
+
+Processing job # 0005
+  Creating file jobDetails_01/herndon.va.team-sde-primary.1496414.job.json
+  Creating file jobDetails_01/herndon.va.team-sde-primary.1496414.basic_qualifications.json
+  Creating normalized version of file 'jobDetails_01/herndon.va.team-sde-primary.1496414.basic_qualifications.json'
+  Normalizing job file 'jobDetails_01/herndon.va.team-sde-primary.1496414.basic_qualifications.normalized.txt'
+
+Some metrics about the files 'jobDetails_01/*normalized.txt'
+  Bin these files by md5sum hash (sort the lines first) and count size of each bin. Tail the output to 20 lines.
+    Number of bins: 5
+      1 09460112d5f91b86a5d889b13f7de0dd
+      1 3cbf82ad521a5e869408ac587e0618e1
+      1 63d16c1503a4d9567f129e5b15691488
+      1 805949911c885dd671116d0f81eb7f8f
+      1 d68f19c73b86aebc1f63b024f9c4bbfd
+
+  Bin these files by line length and count size of each bin.
+      1 4
+      1 5
+      1 7
+      2 3
+
