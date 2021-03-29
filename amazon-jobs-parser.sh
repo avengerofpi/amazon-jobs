@@ -106,7 +106,6 @@ function createJobFiles() {
   jq ".jobs[${i}].basic_qualifications" "${jobsFile}" > "${basicQualificationsFile}";
 
   echo "  Creating normalized version of file '${basicQualificationsFile}'"
-  echo "    -> '${basicQualificationsFile_normalized}'";
   cp "${basicQualificationsFile}" "${basicQualificationsFile_normalized}";
   normalizeJobFile "${basicQualificationsFile_normalized}";
 }
