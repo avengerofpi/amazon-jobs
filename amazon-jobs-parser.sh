@@ -15,7 +15,7 @@ function getJobs() {
   urlParameters+="normalized_location[]=Arlington%2C%20Virginia%2C%20USA&";
   urlParameters+="normalized_location[]=Herndon%2C%20Virginia%2C%20USA&";
   urlParameters+="normalized_location[]=Baltimore%2C%20Maryland%2C%20USA&";
-  #urlParameters+="normalized_location[]=USA&";
+  urlParameters+="normalized_location[]=USA&";
   urlParameters+="business_category[]=amazon-web-services&";
   urlParameters+="radius=24km&";
   urlParameters+="facets[]=location&";
