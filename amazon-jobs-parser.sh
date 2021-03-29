@@ -128,18 +128,26 @@ function normalizeJobFile() {
   # Get rid of "bullet point" chars '·'. Ensure the result is of the form ". "
   # but avoid duplicated spaces or periods.
   sed -i -e "s@\.\?· \?@. @g" "${f}";
+  # Some major splits in qulifications show up with an "OR" surrounded by HTML breaks.
+  # In an attempt to be robust, accomodate some whitespace and HTML break on only one side.
+  # Also accomodate a period after a trailing HTML break.
+  sed -i -e "s@\(<br/> *OR\>\( *\(<br/>\|\.\)*\)*\|\<OR *\(<br/>\|\.\)*\)@.or @g" "${f}";
   # Replace embedded HTML breaks with periods
   sed -i -e "s@[ \.]*<br/>[ \.]*@.@g" "${f}";
-  # Split lines on periods
-  sed -i -e "s@ *\. *@.\n@g" "${f}";
+  # Replace periods in some terms (to avoid issue with later splitting on periods)
+  sed -i -e "s@\(node\|vue\|knockout\|backbone\|react\|salesforce\)\.\(js\|com\)@\1_\2@g" "${f}";
+  sed -i -e "s@\.\(net\)@<dot>\1@g" "${f}";
+  sed -i -e "s@\(etc\)\.\()\)@\1\2@g" "${f}";
+  sed -i -e "s@e\.g\.@eg@g" "${f}";
+  sed -i -e "s@u\.s\.@us@g" "${f}";
   # Get rid of redundant explicit "Basic Qualifications" text
   sed -i -e "s@Basic Qualifications:@@i" "${f}";
   # Get rid of leading ". " text
   sed -i -e 's@^ *\. *@@' "${f}";
   # Normalize references to "related field"
   sed -i -e "s@(\(or \)\?\(related field\)),\?@or \2,@g" "${f}";
-  # Normalize references to "degree" ("BS degree")
-  sed -i -e "s@\(bs\|\(bachelor\)'\?s\?\)\( degree\)\?@BS degree@g" "${f}";
+  # Normalize references to "bs degree"
+  sed -i -e "s@\(bs\|\(bachelor\)'\?s\?\)\( degree\)\?@bs degree@g" "${f}";
   sed -i -e "s@\(\<degree\>\)@\L\1@g" "${f}";
   # Normalize numbers to decimals
   sed -i -e "s@\<zero\>@0@g"  "${f}";
@@ -153,7 +161,11 @@ function normalizeJobFile() {
   sed -i -e "s@\<eight\>@8@g" "${f}";
   sed -i -e "s@\<nine\>@9@g"  "${f}";
   # Change "+ <n+?> years" and "and <n+?> years" to ". <n+?> years"
-  sed -i -e "s@ *\(+\|and\) \(\d\++\? year\)@. \2@g" "${f}";
+  sed -i -e "s@ *\(+\|and\) \([[:digit:]]\++\? year\)@. \2@g" "${f}";
+  # Sometimes there is an extra space in between "<n>" and "+" (i.e. "5 + years")
+  sed -i -e "s@\([[:digit:]]\) \(+ year\)@\1\2@g" "${f}";
+  # Add a period before "with <n>+ years" (splitting lines on period should happen later)
+  sed -i -e "s@\(with [[:digit:]]\++ years\)@.\1@g" "${f}";
   # Try to normalize "experience" clauses
   # Using the non-greedy/lazy operator "\{-}" in some
   #   Sed (POSIX?) doesn't have non-greedy search...maybe use (gulp) Perl ...
@@ -162,8 +174,12 @@ function normalizeJobFile() {
   sed -i -e "s@minimum of \([0-9]\+\) years\?@\1+ years@g" "${f}";
   # vim non-greedy regex operator '\{-\}' doesn't work for sed ...
   #sed -i -e "s@\(years\) of \(.*\) \(\(experience\>\)\{-1\}\(\(.*experience\)\+\)\)@\1 \4 \2\5@g" "${f}";
-  # Get rid of blank lines
-  sed -i -e "/^$/d" "${f}";
+  # Some extra splitting to put clauses on new lines
+  sed -i -e "s@\(,\) \(an eye for \|and experience\|including\)@\1\n\2@g" "${f}";
+  # Split lines on periods
+  sed -i -e "s@ *\. *@.\n@g" "${f}";
+  # Get rid of blank lines and lines with only periods
+  sed -i -e "/^\.*$/d" "${f}";
 }
 
 # Create files for each job ad
