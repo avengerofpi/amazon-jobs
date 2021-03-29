@@ -85,19 +85,89 @@ function getJobAttributes() {
   state="`jq '.state'      ${jobFile} | sed -e 's@"@@g' -e 's@ @_@g'`";
 }
 
-# Create an files for each job ad
-echo "Processing ${numJobs} of ${totalNumJobs} jobs:";
-for (( i=0; i<numJobs; i++ )) {
-  tmpJobFile="`mktemp`";
+# Create files for the selected job index
+function createJobFiles() {
+  local i="${1}";
+  echo;
+  printf "Processing job # %04d\n" $((i+1));
+  local tmpJobFile="`mktemp`";
   jq ".jobs[${i}]" "${jobsFile}" > "${tmpJobFile}";
   getJobAttributes "${tmpJobFile}";
 
-  jobFilePrefix="${jobDetailsDir}/${city,,}.${state,,}.${team}.${jobId}";
-  jobFile="${jobFilePrefix}.job.json";
-  basicQualificationsFile="${jobFilePrefix}.basic_qualifications.json";
+  local jobFilePrefix="${jobDetailsDir}/${city,,}.${state,,}.${team}.${jobId}";
+  local jobFile="${jobFilePrefix}.job.json";
+  local basicQualificationsFile="${jobFilePrefix}.basic_qualifications.json";
+  local basicQualificationsFile_normalized="${jobFilePrefix}.basic_qualifications.processed.json";
 
   echo "  Creating file ${jobFile}";
   mv "${tmpJobFile}" "${jobFile}";
   echo "  Creating file ${basicQualificationsFile}";
   jq ".jobs[${i}].basic_qualifications" "${jobsFile}" > "${basicQualificationsFile}";
+
+  echo "  Creating normalized version of file '${basicQualificationsFile}'"
+  echo "    -> '${basicQualificationsFile_normalized}'";
+  cp "${basicQualificationsFile}" "${basicQualificationsFile_normalized}";
+  normalizeJobFile "${basicQualificationsFile_normalized}";
+}
+
+# Cleanup AWJ Jobs 'basic_qualifications' strings
+function normalizeJobFile() {
+  # Parse filename and ensure it is readable and writable
+  f="${1}";
+  [ -e "${f}" ] || { echo "Error: File '${f}' does not exist"                   && exit 4; }
+  [ -f "${f}" ] || { echo "Error: File '${f}' exists but is not a regular file" && exit 5; }
+  [ -r "${f}" ] || { echo "Error: File '${f}' exists but is not readable"       && exit 6; }
+  [ -w "${f}" ] || { echo "Error: File '${f}' exists but is not writable"       && exit 7; }
+  echo "  Normalizing job file '${f}'";
+  # Get rid of leading/trailing quotes
+  sed -i -e 's@\(^"\|"$\)@@g' "${f}";
+  # Make everthing lowercase
+  sed -i -e "s@\(.*\)@\L\1@" "${f}";
+  # Replace non-ASCII apostrophes
+  sed -i -e "s@’@'@g" "${f}";
+  # Get rid of "bullet point" chars '·'. Ensure the result is of the form ". "
+  # but avoid duplicated spaces or periods.
+  sed -i -e "s@\.\?· \?@. @g" "${f}";
+  # Replace embedded HTML breaks with periods
+  sed -i -e "s@[ \.]*<br/>[ \.]*@.@g" "${f}";
+  # Split lines on periods
+  sed -i -e "s@ *\. *@.\n@g" "${f}";
+  # Get rid of redundant explicit "Basic Qualifications" text
+  sed -i -e "s@Basic Qualifications:@@i" "${f}";
+  # Get rid of leading ". " text
+  sed -i -e 's@^ *\. *@@' "${f}";
+  # Normalize references to "related field"
+  sed -i -e "s@(\(or \)\?\(related field\)),\?@or \2,@g" "${f}";
+  # Normalize references to "degree" ("BS degree")
+  sed -i -e "s@\(bs\|\(bachelor\)'\?s\?\)\( degree\)\?@BS degree@g" "${f}";
+  sed -i -e "s@\(\<degree\>\)@\L\1@g" "${f}";
+  # Normalize numbers to decimals
+  sed -i -e "s@\<zero\>@0@g"  "${f}";
+  sed -i -e "s@\<one\>@1@g"   "${f}";
+  sed -i -e "s@\<two\>@2@g"   "${f}";
+  sed -i -e "s@\<three\>@3@g" "${f}";
+  sed -i -e "s@\<four\>@4@g"  "${f}";
+  sed -i -e "s@\<five\>@5@g"  "${f}";
+  sed -i -e "s@\<six\>@6@g"   "${f}";
+  sed -i -e "s@\<seven\>@7@g" "${f}";
+  sed -i -e "s@\<eight\>@8@g" "${f}";
+  sed -i -e "s@\<nine\>@9@g"  "${f}";
+  # Change "+ <n+?> years" and "and <n+?> years" to ". <n+?> years"
+  sed -i -e "s@ *\(+\|and\) \(\d\++\? year\)@. \2@g" "${f}";
+  # Try to normalize "experience" clauses
+  # Using the non-greedy/lazy operator "\{-}" in some
+  #   Sed (POSIX?) doesn't have non-greedy search...maybe use (gulp) Perl ...
+  #     c.f. https://stackoverflow.com/questions/1103149/non-greedy-reluctant-regex-matching-in-sed
+  #          perl -pe 's|(http://.*?/).*|\1|'
+  sed -i -e "s@minimum of \([0-9]\+\) years\?@\1+ years@g" "${f}";
+  # vim non-greedy regex operator '\{-\}' doesn't work for sed ...
+  #sed -i -e "s@\(years\) of \(.*\) \(\(experience\>\)\{-1\}\(\(.*experience\)\+\)\)@\1 \4 \2\5@g" "${f}";
+  # Get rid of blank lines
+  sed -i -e "/^$/d" "${f}";
+}
+
+# Create files for each job ad
+echo "Processing ${numJobs} of ${totalNumJobs} jobs:";
+for (( i=0; i<numJobs; i++ )) {
+  createJobFiles ${i};
 }
